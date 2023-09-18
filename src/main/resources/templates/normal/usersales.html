@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>Sales</title>
+<style>
+body {
+	background-color: #343a40; /* Dark background color */
+	color: #fff; /* Text color */
+}
+
+.form-container {
+	margin-top: 50px;
+}
+
+.table-container {
+	margin-top: 20px;
+}
+
+.cart-table {
+	margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+	<section>
+		<div class="container form-container">
+			<h1>Sales Form</h1>
+
+			<div class="row">
+
+				<div class="col-md-4">
+					<div class="form-group">
+						<form id="manuForm"
+							th:action="@{/user/saleproductwrtmanufacturer}" method="get">
+							<label for="manufacturer">Select Manufacturer:</label> <select
+								class="form-control" id="manufacturer"
+								onChange="updateDealers()" name="manufacturer">
+								<option value="">Select Manufacturer</option>
+								<option th:each="manufacturer : ${manufacturers}"
+									th:value="${manufacturer.mid}" th:text="${manufacturer.mname}"
+									th:selected="${manufacturer.mid==manuchoice}"></option>
+							</select>
+						</form>
+					</div>
+				</div>
+				<script>
+    function updateDealers() {
+    
+        // Get the form element
+        var form = document.getElementById("manuForm");
+        
+        // Submit the form
+        form.submit();
+    }
+        function updateProducts() {
+        // Get the form element
+        var form = document.getElementById("dealForm");
+        
+        // Submit the form
+        form.submit();
+    }
+</script>
+
+
+
+			</div>
+			<h1>Add Products for Sales</h1>
+			<form action="#" th:action="@{/user/saleaddToCart}"
+				th:object="${productnew}" method="post">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="product">Select Product:</label> <select
+								class="form-control" id="product" name="pname">
+								<option value="">Select product after dealer</option>
+								<option th:each="pro : ${products}" th:text="${pro.pname}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="rate">Price:</label> <input type="number"
+								class="form-control" id="rate" name="pprice" min="0"
+								step="0.0001" required>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="quantity">Quantity:</label> <input type="number"
+								class="form-control" id="quantity" name="pquantity" min="1"
+								required>
+						</div>
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-primary">Add</button>
+			</form>
+			<div th:if="${errorMessage}" id="popup" class="popup"
+				style="color: black">
+				<div class="popup-content">
+					<span th:text="${errorMessage}"></span>
+					<button onclick="closePopup()">Close</button>
+				</div>
+			</div>
+
+			<!-- JavaScript to show/hide the popup -->
+			<script>
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+
+			<style>
+.popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #fff;
+	border: 1px solid #ccc;
+	padding: 20px;
+	z-index: 9999;
+}
+
+.popup-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.popup button {
+	margin-top: 10px;
+}
+</style>
+			
+
+			<div class="table-container">
+				<table style="color: white" class="table table-bordered cart-table">
+					<thead>
+						<tr>
+							<th>Product</th>
+							<th>Price</th>
+							<th>Quantity</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="cartItems">
+						<tr th:each="product : ${cart}">
+							<td th:text="${product.pname}"></td>
+							<td th:text="${product.pprice}"></td>
+							<td th:text="${product.pquantity}"></td>
+							<td><a
+								th:href="@{'/user/salremoveFromCart?cpname='+${product.pname}}">Remove</a>
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h1>Add Customer and Confirm Sale</h1>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="date">Sales Date:</label> <input type="date"
+							class="form-control" id="date" name="date"
+							value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+							required>
+					</div>
+				</div>
+			</div>
+
+				<div class="form-row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="customerName">Customer Name:</label> <input
+								type="text" class="form-control" id="customerName"
+								name="customerName" required>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="customerEmail">Customer Email:</label> <input
+								type="email" class="form-control" id="customerEmail"
+								name="customerEmail" required>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="customerPhone">Customer Phone:</label> <input
+								type="tel" class="form-control" id="customerPhone"
+								name="customerPhone" required>
+						</div>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="customerAddress">Customer Address:</label>
+							<textarea class="form-control" id="customerAddress"
+								name="customerAddress" rows="3" required></textarea>
+						</div>
+					</div>
+				</div>
+
+			
+			<a onclick="showConfirmation(event)" th:href="@{/user/submitsale}"
+				class="btn btn-sm btn-primary">Confirm</a>
+
+		</div>
+		<!-- Confirmation Modal -->
+		<div class="modal fade" style="color: black" id="confirmationModal"
+			tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">Are you sure the credentials are
+						correct?</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Cancel</button>
+						<a href="#" id="confirmLink" class="btn btn-primary">Confirm</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script>
+    function showConfirmation(event) {
+      event.preventDefault(); // Prevent the default anchor tag behavior
+		var dateValue = document.getElementById('date').value;
+		var nameValue=document.getElementById('customerName').value;
+		var emailValue=document.getElementById('customerEmail').value;
+		var phoneValue=document.getElementById('customerPhone').value;
+		var addressValue=document.getElementById('customerAddress').value;
+      var url = event.target.getAttribute('href');
+      var url = event.target.getAttribute('href') + '?date=' + encodeURIComponent(dateValue) + '&cname=' + encodeURIComponent(nameValue)+ '&cemail=' + encodeURIComponent(emailValue)+ '&cphone=' + encodeURIComponent(phoneValue)+ '&cadd=' + encodeURIComponent(addressValue);
+      console.log(url);
+      document.getElementById('confirmLink').setAttribute('href', url);
+
+      $('#confirmationModal').modal('show');
+    }
+  </script>
+
+
+		<script>   
+        function addToCart() {
+            var productId = $('#product').val();
+            var productText = $('#product option:selected').text();
+            var rate = $('#rate').val();
+            var quantity = $('#quantity').val();
+            
+            var row = '<tr>' +
+                        '<td>' + productText + '</td>' +
+                        '<td>' + rate + '</td>' +
+                        '<td>' + quantity + '</td>' +
+                        '<td><button type="button" class="btn btn-danger">Remove</button></td>' +
+                      '</tr>';
+            
+            $('#cartItems').append(row);
+        }
+    </script>
+    
+
+	</section>
+</body>
+</html>

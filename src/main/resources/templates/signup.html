@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>signup</title>
+</head>
+
+<body>
+	<section>
+		<div class="container">
+			<div class="container" style="max-width: 80%">
+				<div class="signupheader">
+					<h2 style="margin-top: 30px; color: #FBFBFB;">Sign Up</h2>
+				</div>
+
+				<form action="#" th:action="@{/do_register}" method="post"
+					th:object="${user}">
+					<div class="form-row" style="color: #FBFBFB;">
+						<div class="form-group col-sm-4">
+							<label for="inputName">Name</label> <input type="text"
+								class="form-control" name="name" id="inputName"
+								placeholder="Name of the Owner" th:value="${user.name}" required>
+						</div>
+						<div class="form-group col-sm-4">
+							<label for="inputNOR">Name of the Retailer</label> <input
+								type="text" class="form-control" name="nameOfRetailer" id="inputNOR"
+								placeholder="Your retailer name here" th:value="${user.nameOfRetailer}" required>
+						</div>
+						<div class="form-group col-sm-4">
+							<label for="inputNOR">Address of the Retailer</label> <input
+								type="text" class="form-control" name="addressOfRetailer" id="inputAOR"
+								placeholder="You retailer address here" th:value="${user.addressOfRetailer}" required>
+						</div>
+					</div>
+					<div class="form-row" style="color: #FBFBFB;">
+						<div class="form-group col-sm-4">
+							<label for="inputEmail">Email</label> <input type="email"
+								class="form-control" name="email" id="inputEmail"
+								placeholder="Your email here" th:value="${user.email}" required>
+							<p style="font-size: 12px">We'll never share your email with
+								anyone else.</p>
+						</div>
+											<style>
+  /* Hide the increment arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    /* Add some padding to prevent the number from touching the borders */
+    padding-right: 20px;
+  }
+</style>
+						<div class="form-group col-sm-4">
+							<label for="inputContact">Contact</label> <input type="number" oninput="javascript: if (this.value.length > 10) this.value = this.value.slice(0, 10);"
+								class="form-control" name="contact" id="inputNOR"
+								placeholder="Your contact here" th:value="${user.contact}" required>
+							<p style="font-size: 12px">We'll never share your contact
+								with anyone else.</p>
+						</div>
+
+					</div>
+					<div class="form-row" style="color: #FBFBFB;">
+						<div class="form-group col-sm-4">
+							<label for="inputPass">Password</label> <input type="password"
+								class="form-control" name="password" id="password"
+								placeholder="Your password here" required>
+						</div>
+						<div class="form-group col-sm-4">
+							<label for="inputCPass">Confirm Password</label> <input
+								type="password" class="form-control" name="cpassword" id="cpassword"
+								placeholder="Please reenter your password" oninput="checkPasswordMatch()" required>
+					  <p id="password-match-msg"></p>
+						</div>
+<script>
+  function checkPasswordMatch() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('cpassword');
+    const passwordMatchMsg = document.getElementById('password-match-msg');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (password.value !== confirmPassword.value) {
+      passwordMatchMsg.textContent = 'Passwords do not match';
+      submitBtn.disabled = true;
+    } else {
+      passwordMatchMsg.textContent = '';
+      submitBtn.disabled = false;
+    }
+  }
+</script>
+					</div>
+					<div class="form-group" style="color: #FBFBFB;">
+						<input type="checkbox" name="agreement" class="form-check-input"
+							id="agreement" /> <label for="agreement">Accept terms
+							and conditions.</label><br>
+								<div th:if="${session.message}"
+				th:classappend="${session.message.type}" role="alert">
+				<p class="text-center" th:text="${session.message.content}"></p>
+
+			</div>
+						<button id="submit-btn" type="submit" class="btn btn-primary">Submit</button>
+						<button type="reset" class="btn btn-warning text-white">Reset</button>
+					</div>
+					</form>
+			</div>
+		
+
+
+		</div>
+
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	</section>
+</body>
+</html>

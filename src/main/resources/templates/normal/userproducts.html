@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>Products</title>
+</head>
+<body>
+	<section>
+		<div class="container" style="margin-top: 30px; color: white;">
+			<h2>Add/Edit Product</h2> 
+			<form th:action="@{/user/product_register(currentPage=${currentPage},formMode=${formMode})}" method="post"
+					th:object="${pro}" enctype="multipart/form-data">
+				<div class="form-row">
+				<div class="form-group col-md-4">
+						<label for="id"></label> <input type="hidden"
+							class="form-control" id="id" th:value="${pro.pid}" name="pid" placeholder="Enter ID" readonly>
+					</div>
+					<input type="hidden" th:value="${pro.stock}" name="stock" readonly>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="dealer">Dealer:</label> 
+						<select	class="form-control" id="dealerId" name="dealerId" required>
+							<option value="">Select a Dealer</option>
+							<option th:each="d : ${dealers}"
+								th:text="${d.dname}" th:value="${d.did}" th:selected="${d.did==dealchoice}"></option>
+						</select>
+					</div>
+						<div class="form-group col-md-6">
+						<label for="category">Category:</label> 
+						<select	class="form-control" id="catId" name="categoryId" required>
+							<option value="">Select a Category</option>
+							<option th:each="c : ${categories}"
+								th:text="${c.cname}" th:value="${c.cid}" th:selected="${c.cid==catchoice}"></option>
+						</select>
+					</div>
+					
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="name">Name:</label> <input type="text"
+							class="form-control" id="name" th:value="${pro.pname}" name="pname"
+							placeholder="Enter product" required>
+					</div>
+					<div class="form-group col-md-6">
+						<label for="dor">Date of Release:</label> <input type="date"
+							class="form-control" id="pdate" th:value="${pro.pdor}" name="pdor"
+							placeholder="Choose date of release" required>
+					</div>
+				</div>
+				<input type="hidden" style="position: absolute; left: -9999px; top: -9999px;" name="photourl" th:value="${pro.photourl}">	
+				<div class="form-row">
+					    <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="photo">Product Photo:</label>
+                        <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="photo" name="image">
+                    </div>
+                </div>
+</div>
+			
+				<button class="btn btn btn-primary" type="submit"> <span th:if="${formMode == 'save'}">Save</span>
+        <span th:if="${formMode == 'edit'}">Done</span></button>
+      <button class="btn btn-danger btn-delete" type="Reset">Reset</button>
+			</form>
+			<div th:if="${errorMessage}" id="popup" class="popup" style="color:black">
+        <div class="popup-content">
+            <span th:text="${errorMessage}"></span>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+       <!-- JavaScript to show/hide the popup -->
+    <script th:inline="javascript">
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+  
+<style>
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 9999;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup button {
+    margin-top: 10px;
+}
+</style>
+
+     <form th:action="@{/user/searchproduct/{keyword}(keyword=${txtSearch})}" method="get" style="margin-top:50px" class="mb-3">
+   
+      <div class="input-group">
+        <input type="text" th:name="txtSearch" class="form-control" placeholder="Search...">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+
+			<table class="table" style="color: white; table-layout: auto;">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Date of Release</th>
+						<th>Category</th>
+						<th>Dealer</th>
+						<th>Photo</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="product : ${listProduct}">
+						<td th:text="${product.pid}"></td>
+						<td th:text="${product.pname}"></td>
+						<td th:text="${product.pdor}"></td>
+						<td th:text="${product.category.cname}"></td>
+						<td th:text="${product.dealer.dname}"></td>
+						<td><img th:src="${product.photosImagePath}"
+							class="img-round" alt="No pic" width="100" height="60" />
+						<td><a
+							th:href="@{/user/updateproduct/{pid}(pid=${product.pid}, currentPage=${currentPage})}"
+							class="btn btn-sm btn-primary">Edit</a> <a
+							onclick="showConfirmation(event)"
+							th:href="@{/user/deleteproduct/{pid}(pid=${product.pid}, currentPage=${currentPage})}"
+							class="btn btn-sm btn-danger">Delete</a></td>
+					</tr>
+				</tbody>
+			</table>
+ <!-- Confirmation Modal -->
+  <div class="modal fade" style="color:black"id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to proceed?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <a href="#" id="confirmLink" class="btn btn-primary">Confirm</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+    function showConfirmation(event) {
+      event.preventDefault(); // Prevent the default anchor tag behavior
+
+      var url = event.target.getAttribute('href');
+      document.getElementById('confirmLink').setAttribute('href', url);
+
+      $('#confirmationModal').modal('show');
+    }
+  </script>
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li th:if="${currentPage!=0}" class="page-item"><a class="page-link" th:href="@{'/user/products/'+${currentPage-1}}">Previous</a></li>
+    
+    <li th:classappend="${currentPage==i-1?'active':''}" th:each="i:${#numbers.sequence(1,totalPages, 1)}" class="page-item"><a class="page-link" th:href="@{'/user/products/'+${i-1}}"><span th:text="${i}"></span></a></li>
+
+    <li th:if="${currentPage+1!=totalPages}" class="page-item"><a class="page-link" th:href="@{'/user/products/'+${currentPage+1}}">Next</a></li>
+  </ul>
+</nav>
+		</div>
+	</section>
+
+</body>
+</html>

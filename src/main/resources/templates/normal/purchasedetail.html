@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>User Dashboard</title>
+</head>
+
+<body>
+	<section>
+	    <div class="container mt-5">
+        
+            <div class="text-md-right">
+                <h5><strong>Purchase Date:</strong> <span th:text="${purchaseDate}"></span></h5>
+            </div>
+            <div class="text-center">
+                <h1><span th:text="${dealerName}"></span></h1>
+                <h3><span th:text="${dealerAddress}"></span></h3>
+            </div>
+            
+       
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h4>Purchase Details</h4>
+                <table  class="table table-bordered">
+                    <thead>
+                        <tr style="color:black; background-color: #f2f2f2;">
+                            <th>SN</th>
+                            <th>Particulars</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:white;">
+							<tr th:each="lm, rowStat:${listPurchaseD}">
+
+								<td th:text="${rowStat.count}"></td>
+							 <td th:text="${lm.particulars}"></td>
+                            <td th:text="${lm.quantity}"></td>
+                            <td th:text="${lm.price}"></td>
+                            <td th:text="${lm.quantity*lm.price}"></td>
+							</tr>
+							<tr style="border: 1px solid black;"><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td>
+							<td style=" font-weight: bold; font-weight: 600; color:black; background-color: #f2f2f2;">Gross Total:</td>
+							<td th:text="${Gross_Total}"></td>							
+							</tr>
+							<tr style="border: 1px solid black;"><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td>
+							<td style="color:black; background-color: #f2f2f2;">VAT</td>
+							<td th:text="${vatAmount}"></td>							
+							</tr>
+							<tr style="border: 1px solid black;"><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td><td style="border: 1px solid #2E2E2D;"></td>
+							<td style="color:black; background-color: #f2f2f2;">Net Total</td>
+							<td th:text="${netTotal}"></td>							
+							</tr>
+							
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+       <form style="text-align:center" action="#" th:action="@{/user/purchasedetailpdf}" method="post">
+    
+      <div class="form-group">
+      <!--   <label for="manufacturerId">Manufacturer ID</label> -->
+        <input  type="hidden" class="form-control" id="purId" th:value="${purchaseId}" name="purchaseId"  readonly>
+
+      </div>
+    
+      <br><br>
+      <button class="btn btn btn-primary" type="submit">Download PDF</button>
+    </form>
+      
+    </div>
+
+	</section>
+
+</body>
+</html>

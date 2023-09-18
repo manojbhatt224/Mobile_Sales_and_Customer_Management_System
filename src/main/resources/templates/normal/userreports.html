@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>User Dashboard</title>
+</head>
+
+<body>
+	<section>
+  <div class="container mt-5">
+        <div style="margin-top:150px" class="row justify-content-center"> <!-- Center the columns horizontally -->
+            <div class="col-md-6">
+                <form th:action="@{/user/purchasereport/0}" method="post">
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block">
+                        Purchase Report
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div style="margin-top:100px" class="row justify-content-center"> <!-- Center the columns horizontally -->
+            <div class="col-md-6">
+                <form th:action="@{/user/salesreport/0}" method="post">
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block">
+                        Sales Report
+                    </button>
+                </form>
+            </div>
+        </div>
+ 
+    </div>
+	</section>
+
+</body>
+</html>

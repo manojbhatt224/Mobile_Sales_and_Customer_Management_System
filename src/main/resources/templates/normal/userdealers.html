@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dealers</title>
+</head>
+<body>
+	<section>
+		<div class="container" style="margin-top: 30px; color: white;">
+			<h2>Add/Edit Dealer</h2> 
+			<form th:action="@{/user/dealer_register(currentPage=${currentPage},formMode=${formMode})}" method="post"
+					th:object="${dealer}">
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="manufacturer">Manufacturer:</label> 
+						<select	class="form-control" id="manufacturer" name="manufacturerId" required>
+							<option value="">Select a manufacturer</option>
+							<option th:each="manu : ${manus}"
+								th:text="${manu.mname}" th:value="${manu.mid}" th:selected="${manu.mid==choice}"></option>
+								<!-- th:selected="${manu.mid==choice}" -->
+						</select>
+					</div>
+					<div class="form-group col-md-6">
+						<label for="id"></label> <input type="hidden"
+							class="form-control" id="id" th:value="${dealer.did}" name="did" placeholder="Enter ID" readonly>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="name">Name:</label> <input type="text"
+							class="form-control" id="name" th:value="${dealer.dname}" name="dname"
+							placeholder="Enter Name" required>
+					</div>
+					<div class="form-group col-md-6">
+						<label for="address">Address:</label> <input type="text"
+							class="form-control" id="address" th:value="${dealer.daddress}" name="daddress"
+							placeholder="Enter Address" required>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="email">Email:</label> <input type="email"
+							class="form-control" id="email" th:value="${dealer.demail}" name="demail"
+							placeholder="Enter Email" required>
+					</div>
+					<style>
+  /* Hide the increment arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    /* Add some padding to prevent the number from touching the borders */
+    padding-right: 20px;
+  }
+</style>
+					<div class="form-group col-md-6">
+						<label for="contact">Contact:</label> <input type="number" oninput="javascript: if (this.value.length > 10) this.value = this.value.slice(0, 10);"
+							class="form-control" id="contact" th:value="${dealer.dcontact}" name="dcontact"
+							placeholder="Enter Contact Number" required>
+					</div>
+				</div>
+				<button class="btn btn btn-primary" type="submit"> <span th:if="${formMode == 'save'}">Save</span>
+        <span th:if="${formMode == 'edit'}">Done</span></button>
+      <button class="btn btn-danger btn-delete" type="Reset">Reset</button>
+			</form>
+			<div th:if="${errorMessage}" id="popup" class="popup" style="color:black">
+        <div class="popup-content">
+            <span th:text="${errorMessage}"></span>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+       <!-- JavaScript to show/hide the popup -->
+    <script th:inline="javascript">
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+  
+<style>
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 9999;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup button {
+    margin-top: 10px;
+}
+</style>
+
+     <form th:action="@{/user/searchdealer/{keyword}(keyword=${txtSearch})}" method="get" style="margin-top:50px" class="mb-3">
+   
+      <div class="input-group">
+        <input type="text" th:name="txtSearch" class="form-control" placeholder="Search...">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+
+			<table class="table" style="color: white; table-layout: auto;">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Address</th>
+						<th>Email</th>
+						<th>Contact</th>
+						<th>Manufacturer</th>
+						<th>Actions</th>
+
+					</tr>
+				</thead>
+				<tbody>
+
+					 <tr th:each="lm:${listDeal}">
+          
+          <td th:text="${lm.did}"></td>
+          <td th:text="${lm.dname}"></td>
+          <td th:text="${lm.daddress}"></td>
+          <td th:text="${lm.demail}"></td>
+          <td th:text="${lm.dcontact}"></td>   
+          <td th:text="${lm.manufacturer.mname}"></td>       
+         <td><a th:href="@{/user/updatedeal/{did}(did=${lm.did}, currentPage=${currentPage})}" class="btn btn-sm btn-primary">Edit</a>
+          <a  onclick="showConfirmation(event)" th:href="@{/user/deletedeal/{did}(did=${lm.did}, currentPage=${currentPage})}" class="btn btn-sm btn-danger">Delete</a>
+
+          </td>
+        </tr>
+
+
+				</tbody>
+			</table>
+ <!-- Confirmation Modal -->
+  <div class="modal fade" style="color:black"id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to proceed?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <a href="#" id="confirmLink" class="btn btn-primary">Confirm</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+    function showConfirmation(event) {
+      event.preventDefault(); // Prevent the default anchor tag behavior
+
+      var url = event.target.getAttribute('href');
+      document.getElementById('confirmLink').setAttribute('href', url);
+
+      $('#confirmationModal').modal('show');
+    }
+  </script>
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li th:if="${currentPage!=0}" class="page-item"><a class="page-link" th:href="@{'/user/dealers/'+${currentPage-1}}">Previous</a></li>
+    
+    <li th:classappend="${currentPage==i-1?'active':''}" th:each="i:${#numbers.sequence(1,totalPages, 1)}" class="page-item"><a class="page-link" th:href="@{'/user/dealers/'+${i-1}}"><span th:text="${i}"></span></a></li>
+
+    <li th:if="${currentPage+1!=totalPages}" class="page-item"><a class="page-link" th:href="@{'/user/dealers/'+${currentPage+1}}">Next</a></li>
+  </ul>
+</nav>
+		</div>
+	</section>
+
+</body>
+</html>

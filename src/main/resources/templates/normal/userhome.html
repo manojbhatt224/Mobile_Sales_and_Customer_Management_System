@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>User Dashboard</title>
+</head>
+<body>
+<section>
+
+ <div class="container">
+        <h1 class="mt-4 mb-4">Available Products</h1>
+        <div class="row">
+            <div class="col-md-3" th:each="product : ${listCardProduct}">
+                <div class="mobile-card">
+                    <img class="imgstock" th:src="${product.photosImagePath}" alt="Error">
+                    <h5 th:text="${product.pname}"></h5>
+                    <p>Manufacturer: <span th:text="${product.dealer.manufacturer.mname}"></span></p>
+                    <p>Dealer: <span th:text="${product.dealer.dname}"></span></p>
+                    <p>Category: <span th:text="${product.category.cname}"></span></p>
+                    <p>Stock:<span th:text="${product.stock}"></span> </p>
+                </div>
+            </div>
+      
+        </div>
+    </div>
+
+   
+</section>
+
+</body>
+</html>

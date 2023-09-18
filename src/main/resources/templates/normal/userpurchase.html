@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="normal/userbase::layout(~{::section})">
+<head>
+<meta charset="ISO-8859-1">
+<title>Purchase</title>
+<style>
+        body {
+            background-color: #343a40; /* Dark background color */
+            color: #fff; /* Text color */
+        }
+        .form-container {
+            margin-top: 50px;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .cart-table {
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+	<section>
+	<div class="container form-container">
+        <h1>Purchase Form</h1>
+       
+        <div class="row">
+     	
+            <div class="col-md-4">
+                <div class="form-group">
+                <form id="manuForm" th:action="@{/user/dealerwrtmanufacturer}" method="get">
+                    <label for="manufacturer">Select Manufacturer:</label>
+                    <select class="form-control" id="manufacturer" onChange="updateDealers()" name="manufacturer">
+                        <option value="">Select Manufacturer</option>
+                        <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.mid}" th:text="${manufacturer.mname}" th:selected="${manufacturer.mid==manuchoice}"></option>
+                    </select>
+                 </form>
+                </div>
+            </div>
+            <script>
+    function updateDealers() {
+    
+        // Get the form element
+        var form = document.getElementById("manuForm");
+        
+        // Submit the form
+        form.submit();
+    }
+        function updateProducts() {
+        // Get the form element
+        var form = document.getElementById("dealForm");
+        
+        // Submit the form
+        form.submit();
+    }
+</script>
+            
+      
+            <div class="col-md-4">
+                <div class="form-group">
+                        <form id="dealForm" th:action="@{/user/productwrtdealer}" method="get">
+                    <label for="dealer">Select Dealer:</label>
+                    <select class="form-control" id="dealer" name="dealer" onchange="updateProducts()">
+                        <option value="">Select dealer after manufacturer</option>
+                        <option th:each="dealer : ${dealers}" th:value="${dealer.did}" th:text="${dealer.dname}" th:selected="${dealer.did==dealchoice}"></option>
+                    </select>
+                    </form>
+                </div>
+            </div>
+            
+            
+        </div>
+          <h1>Add Products for Purchase</h1>
+        <form action="#" th:action="@{/user/addToCart}" th:object="${productnew}" method="post">
+            <div class="row">
+                <div class="col-md-4">
+						<div class="form-group">
+							<label for="product">Select Product:</label> 
+							<select class="form-control" id="product" name="pname" >
+								<option value="">Select product after dealer</option>
+								<option th:each="pro : ${products}" th:value="${pro.pname}"
+									th:text="${pro.pname}"></option>
+							</select>
+						</div>
+					</div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="rate">Price:</label>
+                        <input type="number" class="form-control" id="rate" name="pprice" min="0" step="0.0001" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="pquantity" min="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+          <h1>Purchase List</h1>
+          <div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="date">Purchase Date:</label> <input type="date"
+						class="form-control" id="date" name="date"
+						value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+						required>
+				</div>
+			</div>
+			</div>
+			<div class="table-container" >
+                <table style="color:white" class="table table-bordered cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItems">
+                    <tr th:each="product : ${cart}">
+                <td th:text="${product.pname}"></td>
+                <td th:text="${product.pprice}"></td>
+                <td th:text="${product.pquantity}"></td>
+                <td>
+                    <a th:href="@{/user/removeFromCart/{cpname}(cpname=${product.pname})}">Remove</a> 
+                    
+                </td>
+            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a onclick="showConfirmation(event)" th:href="@{/user/submitpurchase}" class="btn btn-sm btn-primary">Confirm</a>
+    
+    </div>
+   <!-- Confirmation Modal -->
+  <div class="modal fade" style="color:black"id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure the credentials are correct?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <a href="#" id="confirmLink" class="btn btn-primary">Confirm</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+ <script>
+    function showConfirmation(event) {
+      event.preventDefault(); // Prevent the default anchor tag behavior
+		var dateValue = document.getElementById('date').value;
+			var dealerValue = document.getElementById('dealer').value;
+      var url = event.target.getAttribute('href');
+      var url = event.target.getAttribute('href') + '?dealer=' + encodeURIComponent(dealerValue) + '&date=' + encodeURIComponent(dateValue);
+      console.log(url);
+      document.getElementById('confirmLink').setAttribute('href', url);
+
+      $('#confirmationModal').modal('show');
+    }
+  </script>
+    
+
+<script>   
+        function addToCart() {
+            var productId = $('#product').val();
+            var productText = $('#product option:selected').text();
+            var rate = $('#rate').val();
+            var quantity = $('#quantity').val();
+            
+            var row = '<tr>' +
+                        '<td>' + productText + '</td>' +
+                        '<td>' + rate + '</td>' +
+                        '<td>' + quantity + '</td>' +
+                        '<td><button type="button" class="btn btn-danger">Remove</button></td>' +
+                      '</tr>';
+            
+            $('#cartItems').append(row);
+        }
+    </script>
+	
+	</section>
+</body>
+</html>
